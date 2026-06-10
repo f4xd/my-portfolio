@@ -1,5 +1,5 @@
 # Use an image with standard Debian toolchain so native modules build correctly
-FROM node:22-bullseye
+FROM node:22-bookworm
 
 # Install build deps for native addons (node-gyp) and sqlite compilation
 RUN apt-get update \
@@ -14,6 +14,8 @@ WORKDIR /app
 
 # Copy and install dependencies first (cache layer)
 COPY package*.json ./
+# Force building native modules from source to match the container's glibc
+ENV NPM_CONFIG_BUILD_FROM_SOURCE=true
 RUN npm ci --omit=dev
 
 # Copy app sources
